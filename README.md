@@ -9,11 +9,9 @@
   - [Training the Model](#training-the-model)
   - [Making Predictions](#making-predictions)
   - [Optimizations](#optimizations)
-  - [Command-Line Interface](#command-line-interface)
-  - [Files Submitted](#files-submitted)
-  - [Development Notebook](#development-notebook)
-  - [Command Line Application](#command-line-application)
-  - [License](#license)
+  - [Command-Line App](#command-line-app)
+  - [Prediction on unknown data](#prediction-on-unknown-data)
+  - [Conclusion](#conclusion)
 
 ## Project Overview
 
@@ -64,42 +62,71 @@
     7. Mini-Batch Gradient Accumulation: To balance GPU memory usage and efficient training, I introduced mini-batch gradient accumulation. This technique allows me to accumulate gradients over multiple mini-batches before performing an optimization step. It simplifies training and improves memory management.
   ![Screenshot 2023-10-05 at 3 44 14 PM](https://github.com/yannellym/ImageClassifier/assets/91508647/9e7f7d1f-2f83-4468-86c4-9e512ac4ab54)
 
-### Model performance when tested: 
+### Making Predictions: 
+![Screenshot 2023-10-05 at 3 44 52 PM](https://github.com/yannellym/ImageClassifier/assets/91508647/88e382a7-e537-450b-a246-bc8a493f4095)
 
     
 ## Optimizations
  Several optimizations have been made in this project, including:
 
-  💡 Cropping and Normalization: Cropping and normalizing the datasets according to the ImageNet standard is essential for various reasons:
+  1. Cropping and Normalization: Cropping and normalizing the datasets according to the ImageNet standard is essential for various reasons:
   
-  Consistent Input Size: In many machine learning models, including transformers, it is important to have a consistent input size. By cropping the data, we ensure that all input samples have the same dimensions. This is particularly useful when working with sequences of varying lengths, such as sentences or paragraphs. Cropping the data to a fixed length allows us to efficiently process the data in batches and train the model more effectively.
+  2. Consistent Input Size: In many machine learning models, including transformers, it is important to have a consistent input size. By cropping the data, we ensure that all input samples have the same dimensions. This is particularly useful when working with sequences of varying lengths, such as sentences or paragraphs. Cropping the data to a fixed length allows us to efficiently process the data in batches and train the model more effectively.
   
-  Removal of Unnecessary Information: Cropping the data involves selecting a specific portion or window of the input. This helps in removing unnecessary information from the input sequence that may not be relevant to the task at hand. For example, when translating a sentence, we can crop the input to focus only on the source sentence and exclude any additional context or noise.
+  3. Removal of Unnecessary Information: Cropping the data involves selecting a specific portion or window of the input. This helps in removing unnecessary information from the input sequence that may not be relevant to the task at hand. For example, when translating a sentence, we can crop the input to focus only on the source sentence and exclude any additional context or noise.
   
-  Normalization for Improved Training: Normalization is the process of scaling the input data to a standard range. It helps in improving the convergence and stability of the training process. By normalizing the data, we ensure that the input features have similar scales, preventing certain features from dominating the learning process. This is particularly important when working with numerical or continuous features.
+  4. Normalization for Improved Training: Normalization is the process of scaling the input data to a standard range. It helps in improving the convergence and stability of the training process. By normalizing the data, we ensure that the input features have similar scales, preventing certain features from dominating the learning process. This is particularly important when working with numerical or continuous features.
   
-  Mitigating the Impact of Outliers: Normalization can also help in reducing the impact of outliers or extreme values in the data. Outliers can skew the learning process and affect the model's ability to generalize. By normalizing the data, we bring the values within a specific range, making the model more robust to outliers and improving its performance.
+  5. Mitigating the Impact of Outliers: Normalization can also help in reducing the impact of outliers or extreme values in the data. Outliers can skew the learning process and affect the model's ability to generalize. By normalizing the data, we bring the values within a specific range, making the model more robust to outliers and improving its performance.
   
-  Gradient Descent Optimization: Normalizing the data can aid in the optimization process, especially when using gradient-based optimization algorithms. It helps in achieving faster convergence by ensuring that the gradients are within a similar range across different features. This can lead to more stable and efficient training.
+  6. Gradient Descent Optimization: Normalizing the data can aid in the optimization process, especially when using gradient-based optimization algorithms. It helps in achieving faster convergence by ensuring that the gradients are within a similar range across different features. This can lead to more stable and efficient training.
 
-## Making Predictions
-To make predictions using the trained model, you can use the predict.py script. You need to specify the path to an image and the checkpoint file. The following rubric points are addressed in this section:
+- Example:
+![Screenshot 2023-10-06 at 1 04 26 PM](https://github.com/yannellym/ImageClassifier/assets/91508647/cc844190-5f30-4e05-b2ed-c8087902be79)
 
-### Command Line Application
-Training a network
-Training validation log
-Model architecture
-Model hyperparameters
-Training with GPU
-Predicting classes
-Top K classes
-Displaying class names
-Predicting with GPU
+## Command Line App
 
-python predict.py path/to/image.jpg checkpoints/checkpoint.pth --topk 3 --category_names cat_to_name.json --gpu
+### Building the Command Line Application
 
-## Files Submitted
-The following files are included:
+In the second part of this project, I've created a command-line application consisting of two Python scripts: `train.py` and `predict.py`. These scripts empower users to interact with the trained deep neural network for image classification.
+
+#### Train.py
+
+To train a new neural network on a dataset using `train.py`, you can use basic usage or customize its behavior with various options:
+
+- **Basic Usage**: `python train.py data_directory`
+  - This command prints training loss, validation loss, and validation accuracy as the network trains.
+
+- **Options**:
+  - Set the directory to save checkpoints: `python train.py data_dir --save_dir save_directory`
+  - Choose the architecture (e.g., "vgg13"): `python train.py data_dir --arch "vgg13"`
+  - Adjust hyperparameters (e.g., learning rate, hidden units, epochs): `python train.py data_dir --learning_rate 0.01 --hidden_units 512 --epochs 20`
+  - Utilize GPU for training: `python train.py data_dir --gpu`
+
+#### Predict.py
+
+With `predict.py`, you can predict the flower name and its associated probability for a given input image. Similar to `train.py`, it offers basic usage and various options:
+
+- **Basic Usage**: `python predict.py /path/to/image checkpoint`
+  - This command returns the top K most likely classes.
+
+- **Options**:
+  - Specify the number of top classes to return: `python predict.py input checkpoint --top_k 3`
+  - Use a mapping of categories to real names: `python predict.py input checkpoint --category_names cat_to_name.json`
+  - Enable GPU for inference: `python predict.py input checkpoint --gpu`
+
+Both scripts make use of the argparse module for efficient command-line argument parsing, ensuring a user-friendly experience for image classification tasks.
+- Example of train.py:
+<img width="1057" alt="Screenshot 2023-10-06 at 11 38 37 AM" src="https://github.com/yannellym/ImageClassifier/assets/91508647/9f4c39f2-0a00-4cd8-951e-b95fe5b3be4a">
+
+- Example of predict.py: 
+<img width="907" alt="Screenshot 2023-10-06 at 12 07 58 PM" src="https://github.com/yannellym/ImageClassifier/assets/91508647/0154dd13-803f-4593-95e9-d9bcd1495117">
+
+##  Prediction on unknown data:
+  The model achieved impressive accuracy by correctly identifying an image of a petunia during testing. This showcases its proficiency in recognizing distinct flower features and highlights its potential for various image recognition tasks related to different species.
+<img width="592" alt="Screenshot 2023-10-06 at 1 12 22 PM" src="https://github.com/yannellym/ImageClassifier/assets/91508647/deba00f6-8a1f-4400-a6e7-e15c332cfb44">
+
+## The following files are included:
 
 Part 1 - Development Notebook
 Development Notebook
@@ -108,3 +135,8 @@ truncated 'flowers' folder.
 Part 2 - Command Line Application
 train.py
 predict.py
+
+## Conclusion
+
+I thoroughly enjoyed working on this project, which allowed me to delve into the fascinating world of deep learning and image classification. The journey from training a model to optimizing its performance and building a command-line interface was both challenging and rewarding. I've gained valuable insights into working with neural networks and learned numerous techniques for improving model efficiency and accuracy. This project has not only expanded my knowledge but also ignited my passion for AI and computer vision. I look forward to applying these newfound skills to more exciting projects in the future.
+
